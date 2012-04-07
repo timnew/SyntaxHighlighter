@@ -1,6 +1,9 @@
 @mixin round_corners_custom($top, $right, $bottom, $left) {
 	-moz-border-radius: $top $right $bottom $left !important;
 	-webkit-border-radius: $top $right $bottom $left !important;
+	-o-border-radius: $top $right $bottom $left !important;
+	-ms-border-radius: $top $right $bottom $left !important;
+	border-radius: $top $right $bottom $left !important;
 }
 
 @mixin round_corners($radius) {
@@ -9,6 +12,7 @@
 
 div.syntaxhighlighter {
 	@include round_corners(5px);
+	padding: 10px 5px 10px 5px;
 }
 
 .syntaxhighlighter {

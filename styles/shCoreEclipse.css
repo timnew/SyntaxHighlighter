@@ -1,6 +1,10 @@
 div.syntaxhighlighter {
   -moz-border-radius: 5px 5px 5px 5px !important;
   -webkit-border-radius: 5px 5px 5px 5px !important;
+  -o-border-radius: 5px 5px 5px 5px !important;
+  -ms-border-radius: 5px 5px 5px 5px !important;
+  border-radius: 5px 5px 5px 5px !important;
+  padding: 10px 5px 10px 5px;
 }
 
 .syntaxhighlighter a,
@@ -15,6 +19,9 @@ div.syntaxhighlighter {
 .syntaxhighlighter textarea {
   -moz-border-radius: 0 0 0 0 !important;
   -webkit-border-radius: 0 0 0 0 !important;
+  -o-border-radius: 0 0 0 0 !important;
+  -ms-border-radius: 0 0 0 0 !important;
+  border-radius: 0 0 0 0 !important;
   background: none !important;
   border: 0 !important;
   bottom: auto !important;

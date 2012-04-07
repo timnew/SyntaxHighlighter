@@ -1,0 +1,24 @@
+<div id="016_jekyll_mode">
+	
+	<code id="jekyll" class="js title='title' keywords=['1','2','3'] description:description" title="XRegExp tests">
+		// test XRegExp
+	</code>
+
+<!-- 	<code id="json" class="brush:js;title:'title';keywords:['1','2','3'];description:description" title="XRegExp tests">
+		// test XRegExp
+	</code> -->
+
+</div>
+<script type="text/javascript">
+queue(function()
+{
+	module('016_jekyll_mode');
+
+	test('test jekyll mode', function() {
+		SyntaxHighlighter.config.jekyllMode = true;
+		SyntaxHighlighter.config.tagName = 'code';
+	 	var output = SyntaxHighlighter.findElements({}, $('#jekyll')[0])[0];
+		console.log(output.params);
+	});
+});
+</script>

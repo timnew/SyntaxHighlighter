@@ -45,7 +45,7 @@ var sh = {
 		'gutter' : true,
 		
 		/** Enables or disables toolbar. */
-		'toolbar' : true,
+		'toolbar' : false,
 		
 		/** Enables quick code copy and paste from double click. */
 		'quick-code' : true,
@@ -72,7 +72,10 @@ var sh = {
 		
 		/** Blogger mode flag. */
 		bloggerMode : false,
-		
+
+		/** class="<brush> [key=value ...]"  */
+		jekyllMode: false,
+				
 		stripBrs : false,
 		
 		/** Name of the tag that SyntaxHighlighter will automatically look for. */
@@ -262,7 +265,7 @@ var sh = {
 			var item = {
 				target: elements[i], 
 				// local params take precedence over globals
-				params: merge(globalParams, parseParams(elements[i].className))
+				params: merge(globalParams, parseParams(elements[i].className, conf.jekyllMode))
 			};
 
 			if (item.params['brush'] == null)
@@ -717,27 +720,55 @@ function trimFirstAndLastLines(str)
  * For example:
  *   name1: value; name2: [value, value]; name3: 'value'
  *   
- * @param {String} str    Input string.
- * @return {Object}       Returns deserialized object.
+ * @param {String} str          Input string.
+ * @param {Boolean} simpleClass Parse class as brush
+ * @return {Object}             Returns deserialized object.
  */
-function parseParams(str)
+function parseParams(str, jekyllMode)
 {
 	var match, 
 		result = {},
+		simpleRegex = new XRegExp('^\\s*[\\w-]+\\s*$'),
 		arrayRegex = new XRegExp("^\\[(?<values>(.*?))\\]$"),
-		regex = new XRegExp(
-			"(?<name>[\\w-]+)" +
+		jsonRegex = new XRegExp(
+			"(?<name>[\\w-_%#]+)" +
 			"\\s*:\\s*" +
 			"(?<value>" +
-				"[\\w-%#]+|" +		// word
+				"[\\w-_%#]+|" +		// word
 				"\\[.*?\\]|" +		// [] array
 				'".*?"|' +			// "" string
 				"'.*?'" +			// '' string
 			")\\s*;?",
 			"g"
-		)
+		),
+		jekyllBrush = new XRegExp(
+			'(?<brush>[\\w-_%#]+)' +
+			'\\s*' +
+			'(?<rest>.*)'
+		),
+		jekyllValues = new XRegExp(
+			"(?<name>[\\w-_%#]+)" +
+			"\\s*=\\s*" +
+			"(?<value>" +
+				"[\\w-_%#]+|" +		// word
+				"\\[.*?\\]|" +		// [] array
+				'".*?"|' +			// "" string
+				"'.*?'" +			// '' string
+			")\\s+?",
+			"g"
+		),
+		regex = jekyllMode ? jekyllValues : jsonRegex
 		;
 
+	if(jekyllMode ) {
+		if((match = jekyllBrush.exec(str)) == null)
+			return result;
+		
+		result['brush'] = match.brush;
+
+		str = match.rest;
+	}
+	
 	while ((match = regex.exec(str)) != null) 
 	{
 		var value = match.value

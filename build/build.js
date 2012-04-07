@@ -2,7 +2,8 @@ var path      = require('path'),
 	fs        = require('fs'),
 	minimatch = require('minimatch'),
 	less      = require('less'),
-	vm        = require('vm')
+	vm        = require('vm'),
+	exec = require('child_process').exec
 	;
 
 desc('Default task, builds SyntaxHighlighter');
@@ -10,18 +11,52 @@ task('default', [ 'build' ]);
 
 var baseDir      = __dirname,
 	sourceDir    = path.join(baseDir, '..'),
+	compassDir   = path.join(sourceDir,'compass'),
 	sourceJsDir  = path.join(sourceDir, 'scripts'),
 	sourceCssDir = path.join(sourceDir, 'styles'),
 	outputDir    = path.join(baseDir, 'output'),
 	outputJsDir  = path.join(outputDir, 'scripts'),
 	outputCssDir = path.join(outputDir, 'styles'),
 	includesDir  = path.join(baseDir, 'includes'),
-	variables    = getVars(includesDir)
+	variables    = getVars(includesDir),
+	deployDir    = path.join(sourceDir, '../timnew.github.com/assets/syntax-highlighter'),
+	deployJsDir  = path.join(deployDir, 'scripts'),
+	deployCssDir = path.join(deployDir, 'styles')
 	;
 
+variables.about   = "http://timnew.github.com"
 variables.version = '3.0.83';
 variables.date    = new Date().toUTCString();
 variables.about   = variables.about.replace(/\n|\t/g, '').replace(/"/g, '\\\"');
+
+task('debug', ['enableDebug', 'deploy']);
+
+task('sass', function() {
+	exec('sass -t expanded --update "' + compassDir + '":"' + sourceCssDir + '"', 
+		function(error, stdout, stderr) {
+			console.error(stderr);
+			console.log(stdout);
+
+			if(error) {
+				console.error('ERROR!');
+			}
+			else {
+				console.log('DONE!');
+			}
+			
+			complete();
+		});
+}, {async: true});
+
+task('enableDebug', function() {
+	variables.debug   = true;
+})
+
+task('deploy', ['build'], function() {
+	copy(outputJsDir,deployJsDir, 'sh*.js');
+	copy(outputCssDir, deployCssDir, '**.css');
+	console.log('Deploy Done');
+});
 
 task('build', 'clean copy pack add_header process_variables validate'.split(/ /g), function()
 {
@@ -163,7 +198,7 @@ function compressJs(source)
 	ast = uglify.ast_mangle(ast, opts);
 	ast = uglify.ast_squeeze(ast);
 
-	return uglify.gen_code(ast);
+	return variables.debug ? source : uglify.gen_code(ast);
 }
 
 function copy(src, dest, pattern)
