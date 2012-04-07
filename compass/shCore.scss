@@ -7,6 +7,10 @@
 	@include round_corners_custom($radius, $radius, $radius, $radius);
 }
 
+div.syntaxhighlighter {
+	@include round_corners(5px);
+}
+
 .syntaxhighlighter {
 	a,
 	div,

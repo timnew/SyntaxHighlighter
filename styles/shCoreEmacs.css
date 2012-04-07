@@ -1,3 +1,8 @@
+div.syntaxhighlighter {
+  -moz-border-radius: 5px 5px 5px 5px !important;
+  -webkit-border-radius: 5px 5px 5px 5px !important;
+}
+
 .syntaxhighlighter a,
 .syntaxhighlighter div,
 .syntaxhighlighter code,
